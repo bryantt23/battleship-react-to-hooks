@@ -1,4 +1,8 @@
 class Player {
+  constructor(name) {
+    this.name = name;
+  }
+
   makePlay(gameboard, row = 'computer', col = 'computer') {
     if (row === 'computer' || col === 'computer') {
       const size = gameboard.size;

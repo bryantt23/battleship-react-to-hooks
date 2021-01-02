@@ -23,18 +23,13 @@ const coordinates2 = [
 class GameEngine {
   constructor() {}
 
-  startGame() {
-    const player = new Player();
-    const computer = new Player();
-    this.playerGameboard = new Gameboard();
-    this.computerGameboard = new Gameboard();
-
-    // for (let i = 0; i < shipSizes.length; i++) {
-    //   const ship = new Ship(shipSizes[i]);
-    //   const row = coordinates[i][0],
-    //     col = coordinates[i][1];
-    //   this.playerGameboard.placeShip(row, col, 'horizontal', ship);
-    // }
+  placeShips() {
+    for (let i = 0; i < shipSizes.length; i++) {
+      const ship = new Ship(shipSizes[i]);
+      const row = coordinates[i][0],
+        col = coordinates[i][1];
+      this.playerGameboard.placeShip(row, col, 'horizontal', ship);
+    }
 
     for (let i = 0; i < shipSizes2.length; i++) {
       const ship = new Ship(shipSizes2[i]);
@@ -42,6 +37,14 @@ class GameEngine {
         col = coordinates2[i][1];
       this.computerGameboard.placeShip(row, col, 'vertical', ship);
     }
+  }
+
+  startGame() {
+    const player = new Player('player');
+    const computer = new Player('computer');
+    this.playerGameboard = new Gameboard();
+    this.computerGameboard = new Gameboard();
+    this.placeShips();
 
     // console.log(this.playerGameboard.getBoard());
   }

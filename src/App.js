@@ -6,7 +6,7 @@ import BoardSection from './components/BoardSection';
 class App extends Component {
   constructor() {
     super();
-    this.state = { cheat: false };
+    this.state = { cheat: false, playerGameboard: [], computerGameboard: [] };
   }
   /*
 plan
@@ -50,20 +50,29 @@ later create a cheat board to see the computer's board
 
 
 */
+  testFunction(i, j, gameBoard, board) {
+    console.log(gameBoard[i][j]);
+    this.renderBoard(board);
+  }
 
-  renderPlayerGameBoard(playerGameBoard) {
+  renderBoard(board) {
+    const gameBoard = board.getBoard();
+
     const dom = [];
-    let length = playerGameBoard.length;
+    let length = gameBoard.length;
     for (let i = 0; i < length; i++) {
       let arr = [];
       for (let j = 0; j < length; j++) {
-        const val = playerGameBoard[i][j];
+        const val = gameBoard[i][j];
         console.log(val);
         arr.push(
           <BoardSection
-            boardState={playerGameBoard[i][j]}
+            boardState={gameBoard[i][j]}
             getLocation={() => {
               console.log(i + ' ' + j);
+              console.log(board.receiveAttack(i, j));
+              console.log(gameBoard[i][j]);
+              this.testFunction(i, j, gameBoard, board);
             }}
           />
         );
@@ -77,18 +86,18 @@ later create a cheat board to see the computer's board
   render() {
     const g = new GameEngine();
     g.startGame();
-    console.log(g.playerGameboard.getBoard());
+    console.log(g.playerGameboard);
     console.log(g.computerGameboard.getBoard());
-    const playerGameBoard = g.playerGameboard.getBoard();
-    const playerGameBoardUi = this.renderPlayerGameBoard(playerGameBoard);
+    // const playerGameBoard = g.playerBoard.getBoard();
+    const playerBoardUi = this.renderBoard(g.playerGameboard);
 
-    const computerGameBoard = g.computerGameboard.getBoard();
-    const computerGameBoardUi = this.renderPlayerGameBoard(computerGameBoard);
+    // const computerBoard = g.computerBoard.getBoard();
+    const computerBoardUi = this.renderBoard(g.computerGameboard);
 
     return (
       <div className='App'>
         <h3>Player Board</h3>
-        {playerGameBoardUi}
+        {playerBoardUi}
         <h3>Computer Board</h3>
         <br />
         <button
@@ -98,7 +107,7 @@ later create a cheat board to see the computer's board
         >
           {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
         </button>
-        {this.state.cheat && computerGameBoardUi}
+        {this.state.cheat && computerBoardUi}
       </div>
     );
   }

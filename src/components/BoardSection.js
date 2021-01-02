@@ -4,6 +4,7 @@ export class BoardSection extends Component {
   ///maybe deal with it differently based on player or computer board
   render() {
     const message = this.props.boardState === undefined ? 'SEA' : 'SHIP';
+    console.log(message);
     return (
       <td
         // disabled={this.props.boardState !== 'SEA'}
