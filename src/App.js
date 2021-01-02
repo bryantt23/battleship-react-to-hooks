@@ -37,6 +37,10 @@ but first render and take in row & col & print that
 i'll render my board first with the ships showing
 
 then i'll deal with the computer board
+which is just a bunch of SEA stuff
+later create a cheat board to see the computer's board
+
+
 
 
 
@@ -67,16 +71,22 @@ then i'll deal with the computer board
   }
 
   render() {
-    let g = new GameEngine();
+    const g = new GameEngine();
     g.startGame();
     console.log(g.playerGameboard.getBoard());
+    console.log(g.computerGameboard.getBoard());
     const playerGameBoard = g.playerGameboard.getBoard();
     const playerGameBoardUi = this.renderPlayerGameBoard(playerGameBoard);
 
+    const computerGameBoard = g.computerGameboard.getBoard();
+    const computerGameBoardUi = this.renderPlayerGameBoard(computerGameBoard);
+
     return (
       <div className='App'>
-        hii
+        <h3>Player Board</h3>
         {playerGameBoardUi}
+        <h3>Computer Board</h3>
+        {computerGameBoardUi}
       </div>
     );
   }
