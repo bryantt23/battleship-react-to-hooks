@@ -187,7 +187,7 @@ then later work on player board
           <BoardSection
             attacked={this.state.playerAttackedPositions[i][j]}
             status={this.state.playerBoard[i][j]}
-            getLocation={() => {
+            updateBoardSectionState={() => {
               this.updateBoardSectionState(i, j, 'playerBoard');
               // console.log(i + ' ' + j);
               // console.log(board.receiveAttack(i, j));
@@ -204,6 +204,7 @@ then later work on player board
     return dom;
   }
 
+  //basically same function as renderPlayerUi
   renderComputerUi() {
     const dom = [];
     let length = this.state.computerBoard.length;
@@ -211,18 +212,12 @@ then later work on player board
       let arr = [];
       for (let j = 0; j < length; j++) {
         arr.push(
-          //attacked, not attacked
-          //attacked can be hit or miss
-          //not attacked will just be the ship or sea
           <BoardSection
+            isComputer={true}
             attacked={this.state.computerAttackedPositions[i][j]}
             status={this.state.computerBoard[i][j]}
             getLocation={() => {
-              this.updateBoardSectionState(i, j);
-              // console.log(i + ' ' + j);
-              // console.log(board.receiveAttack(i, j));
-              // console.log(gameBoard[i][j]);
-              // this.testFunction(i, j, gameBoard, board);
+              this.updateBoardSectionState(i, j, 'computerBoard');
             }}
           />
         );
@@ -230,7 +225,6 @@ then later work on player board
       const div = <tr>{arr}</tr>;
       dom.push(div);
     }
-    console.log(dom);
     return dom;
   }
 
@@ -252,10 +246,10 @@ then later work on player board
       <div className='App'>
         {JSON.stringify(this.state)}
         <h3>Player Board</h3>
-        {JSON.stringify(this.state.playerBoard)}
+        {/* {JSON.stringify(this.state.playerBoard)} */}
         {playerBoardUi}
         <h3>Computer Board</h3>
-        {/* {computerBoardUi} */}
+        {computerBoardUi}
         <br />
         <button
           onClick={() => {

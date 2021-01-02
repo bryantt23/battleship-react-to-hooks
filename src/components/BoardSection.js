@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 export class BoardSection extends Component {
   ///maybe deal with it differently based on player or computer board
   render() {
-    const { attacked, status } = this.props;
+    const { attacked, status, isComputer } = this.props;
     let message;
-    if (status === undefined) {
+    if (status === undefined || (!attacked && isComputer)) {
       message = 'SEA';
     } else if (typeof status === 'object') {
       message = 'SHIP';
