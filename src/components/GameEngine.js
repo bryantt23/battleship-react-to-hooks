@@ -14,20 +14,22 @@ const coordinates = [
 // const coordinates = [[5, 9]];
 
 class GameEngine {
+  constructor() {}
+
   startGame() {
     const player = new Player();
     const computer = new Player();
-    const playerGameboard = new Gameboard();
+    this.playerGameboard = new Gameboard();
     const computerGameboard = new Gameboard();
 
     for (let i = 0; i < shipSizes.length; i++) {
       const ship = new Ship(shipSizes[i]);
       const row = coordinates[i][0],
         col = coordinates[i][1];
-      playerGameboard.placeShip(row, col, 'horizontal', ship);
+      this.playerGameboard.placeShip(row, col, 'horizontal', ship);
     }
 
-    console.log(playerGameboard.getBoard());
+    // console.log(this.playerGameboard.getBoard());
   }
 }
 

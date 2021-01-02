@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import './App.css';
 import GameEngine from './components/GameEngine';
+import BoardSection from './components/BoardSection';
 
 class App extends Component {
   /*
@@ -33,16 +34,51 @@ i'll try this
 
 but first render and take in row & col & print that
 
+i'll render my board first with the ships showing
+
+then i'll deal with the computer board
+
 
 
 
 */
 
+  renderPlayerGameBoard(playerGameBoard) {
+    const dom = [];
+    let length = playerGameBoard.length;
+    for (let i = 0; i < length; i++) {
+      let arr = [];
+      for (let j = 0; j < length; j++) {
+        const val = playerGameBoard[i][j];
+        console.log(val);
+        arr.push(
+          <BoardSection
+            boardState={playerGameBoard[i][j]}
+            getLocation={() => {
+              console.log(i + ' ' + j);
+            }}
+          />
+        );
+      }
+      const div = <tr>{arr}</tr>;
+      dom.push(div);
+    }
+    return dom;
+  }
+
   render() {
     let g = new GameEngine();
     g.startGame();
+    console.log(g.playerGameboard.getBoard());
+    const playerGameBoard = g.playerGameboard.getBoard();
+    const playerGameBoardUi = this.renderPlayerGameBoard(playerGameBoard);
 
-    return <div className='App'>hii</div>;
+    return (
+      <div className='App'>
+        hii
+        {playerGameBoardUi}
+      </div>
+    );
   }
 }
 
