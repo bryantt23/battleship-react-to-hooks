@@ -3,10 +3,39 @@ import './App.css';
 import GameEngine from './components/GameEngine';
 import BoardSection from './components/BoardSection';
 
+const boardSize = 10;
+
+let arr = [];
+for (let i = 0; i < boardSize; i++) {
+  arr.push(new Array(boardSize));
+}
+
 class App extends Component {
   constructor() {
     super();
-    this.state = { cheat: false, playerGameboard: [], computerGameboard: [] };
+    this.state = {
+      cheat: false,
+      playerAttackedPositions: arr,
+      computerAttackedPositions: arr,
+      playerBoard: [],
+      computerBoard: []
+    };
+  }
+
+  componentDidMount() {
+    const g = new GameEngine();
+    g.startGame();
+    const playerGameBoard = g.playerGameboard.getBoard();
+    // const playerBoardUi = this.renderBoard(g.playerGameboard, 'player');
+    // console.log(g.playerGameboard);
+    console.log(g.computerGameboard.getBoard());
+    // console.log(g.playerGameboard);
+    console.log(g.playerGameboard.getBoard());
+
+    this.setState({
+      playerBoard: [...g.computerGameboard.getBoard()],
+      computerBoard: [...g.playerGameboard.getBoard()]
+    });
   }
   /*
 plan
@@ -45,6 +74,10 @@ which is just a bunch of SEA stuff
 later create a cheat board to see the computer's board
 
 
+plan again
+will use app state to track which parts have been attacked
+will start with the computer board
+then later work on player board
 
 
 
@@ -55,24 +88,111 @@ later create a cheat board to see the computer's board
     this.renderBoard(board);
   }
 
-  renderBoard(board) {
-    const gameBoard = board.getBoard();
+  // renderBoard(board) {
+  //   const gameBoard = board.getBoard();
+  //   console.log(gameBoard);
 
+  //   const dom = [];
+  //   let length = gameBoard.length;
+  //   for (let i = 0; i < length; i++) {
+  //     let arr = [];
+  //     for (let j = 0; j < length; j++) {
+  //       const val = gameBoard[i][j];
+  //       console.log(val);
+  //       arr.push(
+  //         <BoardSection
+  //           boardState={gameBoard[i][j]}
+  //           getLocation={() => {
+  //             console.log(i + ' ' + j);
+  //             console.log(board.receiveAttack(i, j));
+  //             console.log(gameBoard[i][j]);
+  //             this.testFunction(i, j, gameBoard, board);
+  //           }}
+  //         />
+  //       );
+  //     }
+  //     const div = <tr>{arr}</tr>;
+  //     dom.push(div);
+  //   }
+  //   console.log(dom);
+  //   return dom;
+  // }
+
+  // renderBoard(board, player) {
+  //   const gameBoard = board.getBoard();
+  //   console.log(gameBoard);
+
+  //   const dom = [];
+  //   let length = gameBoard.length;
+  //   for (let i = 0; i < length; i++) {
+  //     let arr = [];
+  //     for (let j = 0; j < length; j++) {
+  //       const val = gameBoard[i][j];
+  //       console.log(val);
+  //       arr.push(
+  //         <BoardSection
+  //           boardState={gameBoard[i][j]}
+  //           getLocation={() => {
+  //             console.log(i + ' ' + j);
+  //             console.log(board.receiveAttack(i, j));
+  //             console.log(gameBoard[i][j]);
+  //             this.testFunction(i, j, gameBoard, board);
+  //           }}
+  //         />
+  //       );
+  //     }
+  //     const div = <tr>{arr}</tr>;
+  //     dom.push(div);
+  //   }
+  //   console.log(dom);
+  //   return dom;
+  // }
+
+  copyArr(computer, player) {
+    console.log(computer + ' ' + player);
+    this.setState({
+      playerBoard: [...computer],
+      computerBoard: [...player]
+    });
+  }
+
+  updatePlayerBoardSectionState(i, j) {
+    //should be true if it's false my disabled is broken
+    const attacked = this.state.playerAttackedPositions;
+    const playerBoard = this.state.playerBoard;
+    if (playerBoard[i][j] === undefined) {
+      //miss
+      playerBoard[i][j] = 'MISS';
+    } else {
+      //hit
+      playerBoard[i][j] = 'HIT';
+    }
+    attacked[i][j] = true;
+    this.setState({
+      playerAttackedPositions: attacked,
+      playerBoard: playerBoard
+    });
+  }
+
+  renderPlayerUi() {
     const dom = [];
-    let length = gameBoard.length;
+    let length = this.state.playerBoard.length;
     for (let i = 0; i < length; i++) {
       let arr = [];
       for (let j = 0; j < length; j++) {
-        const val = gameBoard[i][j];
-        console.log(val);
         arr.push(
+          //attacked, not attacked
+          //attacked can be hit or miss
+          //not attacked will just be the ship or sea
           <BoardSection
-            boardState={gameBoard[i][j]}
+            attacked={this.state.playerAttackedPositions[i][j]}
+            status={this.state.playerBoard[i][j]}
             getLocation={() => {
-              console.log(i + ' ' + j);
-              console.log(board.receiveAttack(i, j));
-              console.log(gameBoard[i][j]);
-              this.testFunction(i, j, gameBoard, board);
+              this.updatePlayerBoardSectionState(i, j);
+              // console.log(i + ' ' + j);
+              // console.log(board.receiveAttack(i, j));
+              // console.log(gameBoard[i][j]);
+              // this.testFunction(i, j, gameBoard, board);
             }}
           />
         );
@@ -80,23 +200,28 @@ later create a cheat board to see the computer's board
       const div = <tr>{arr}</tr>;
       dom.push(div);
     }
+    console.log(dom);
     return dom;
   }
 
   render() {
-    const g = new GameEngine();
-    g.startGame();
-    console.log(g.playerGameboard);
-    console.log(g.computerGameboard.getBoard());
+    // const g = new GameEngine();
+
+    // g.startGame();
+    // console.log(g.playerGameboard);
+    // console.log(g.computerGameboard.getBoard());
     // const playerGameBoard = g.playerBoard.getBoard();
-    const playerBoardUi = this.renderBoard(g.playerGameboard);
+    const playerBoardUi = this.renderPlayerUi();
 
     // const computerBoard = g.computerBoard.getBoard();
-    const computerBoardUi = this.renderBoard(g.computerGameboard);
+    // const computerBoardUi = this.renderBoard(g.computerGameboard, 'computer');
+    // this.copyArr(g.computerGameboard.getBoard(), g.playerGameboard.getBoard());
 
     return (
       <div className='App'>
+        {JSON.stringify(this.state)}
         <h3>Player Board</h3>
+        {JSON.stringify(this.state.playerBoard)}
         {playerBoardUi}
         <h3>Computer Board</h3>
         <br />
@@ -107,7 +232,7 @@ later create a cheat board to see the computer's board
         >
           {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
         </button>
-        {this.state.cheat && computerBoardUi}
+        {/* {this.state.cheat && computerBoardUi} */}
       </div>
     );
   }
