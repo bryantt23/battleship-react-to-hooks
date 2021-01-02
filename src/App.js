@@ -156,21 +156,21 @@ then later work on player board
     });
   }
 
-  updatePlayerBoardSectionState(i, j) {
+  updateBoardSectionState(i, j, board) {
     //should be true if it's false my disabled is broken
     const attacked = this.state.playerAttackedPositions;
-    const playerBoard = this.state.playerBoard;
-    if (playerBoard[i][j] === undefined) {
+    const boardState = this.state[board];
+    if (boardState[i][j] === undefined) {
       //miss
-      playerBoard[i][j] = 'MISS';
+      boardState[i][j] = 'MISS';
     } else {
       //hit
-      playerBoard[i][j] = 'HIT';
+      boardState[i][j] = 'HIT';
     }
     attacked[i][j] = true;
     this.setState({
       playerAttackedPositions: attacked,
-      playerBoard: playerBoard
+      [board]: boardState
     });
   }
 
@@ -188,7 +188,37 @@ then later work on player board
             attacked={this.state.playerAttackedPositions[i][j]}
             status={this.state.playerBoard[i][j]}
             getLocation={() => {
-              this.updatePlayerBoardSectionState(i, j);
+              this.updateBoardSectionState(i, j, 'playerBoard');
+              // console.log(i + ' ' + j);
+              // console.log(board.receiveAttack(i, j));
+              // console.log(gameBoard[i][j]);
+              // this.testFunction(i, j, gameBoard, board);
+            }}
+          />
+        );
+      }
+      const div = <tr>{arr}</tr>;
+      dom.push(div);
+    }
+    console.log(dom);
+    return dom;
+  }
+
+  renderComputerUi() {
+    const dom = [];
+    let length = this.state.computerBoard.length;
+    for (let i = 0; i < length; i++) {
+      let arr = [];
+      for (let j = 0; j < length; j++) {
+        arr.push(
+          //attacked, not attacked
+          //attacked can be hit or miss
+          //not attacked will just be the ship or sea
+          <BoardSection
+            attacked={this.state.computerAttackedPositions[i][j]}
+            status={this.state.computerBoard[i][j]}
+            getLocation={() => {
+              this.updateBoardSectionState(i, j);
               // console.log(i + ' ' + j);
               // console.log(board.receiveAttack(i, j));
               // console.log(gameBoard[i][j]);
@@ -212,6 +242,7 @@ then later work on player board
     // console.log(g.computerGameboard.getBoard());
     // const playerGameBoard = g.playerBoard.getBoard();
     const playerBoardUi = this.renderPlayerUi();
+    const computerBoardUi = this.renderComputerUi();
 
     // const computerBoard = g.computerBoard.getBoard();
     // const computerBoardUi = this.renderBoard(g.computerGameboard, 'computer');
@@ -224,6 +255,7 @@ then later work on player board
         {JSON.stringify(this.state.playerBoard)}
         {playerBoardUi}
         <h3>Computer Board</h3>
+        {/* {computerBoardUi} */}
         <br />
         <button
           onClick={() => {
