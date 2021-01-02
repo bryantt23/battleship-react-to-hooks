@@ -4,6 +4,10 @@ import GameEngine from './components/GameEngine';
 import BoardSection from './components/BoardSection';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.state = { cheat: false };
+  }
   /*
 plan
 first render my board with ships
@@ -86,7 +90,15 @@ later create a cheat board to see the computer's board
         <h3>Player Board</h3>
         {playerGameBoardUi}
         <h3>Computer Board</h3>
-        {computerGameBoardUi}
+        <br />
+        <button
+          onClick={() => {
+            this.setState({ cheat: !this.state.cheat });
+          }}
+        >
+          {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
+        </button>
+        {this.state.cheat && computerGameBoardUi}
       </div>
     );
   }
