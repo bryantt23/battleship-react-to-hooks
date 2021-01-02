@@ -15,13 +15,13 @@ class Gameboard {
   }
 
   getBoard() {
-    for (var i = 0; i < this.gameBoard.length; i++) {
-      let row = '';
-      for (var j = 0; j < this.gameBoard[0].length; j++) {
-        row += this.gameBoard[i][j] + ' ';
-      }
-      console.log(row);
-    }
+    // for (var i = 0; i < this.gameBoard.length; i++) {
+    //   let row = '';
+    //   for (var j = 0; j < this.gameBoard[0].length; j++) {
+    //     row += this.gameBoard[i][j] + ' ';
+    //   }
+    //   console.log(row);
+    // }
 
     return this.gameBoard;
   }

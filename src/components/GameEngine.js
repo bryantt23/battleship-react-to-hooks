@@ -3,15 +3,15 @@ import Ship from './Ship';
 import Gameboard from './Gameboard';
 
 // const shipSizes=[2, 3, 3, 4, 5]
-// const shipSizes = [3, 4, 5];
-// const coordinates = [
-//   [0, 0],
-//   [3, 3],
-//   [5, 9]
-// ];
+const shipSizes = [10, 4, 1];
+const coordinates = [
+  [0, 0],
+  [3, 3],
+  [9, 9]
+];
 
-const shipSizes = [5];
-const coordinates = [[5, 9]];
+// const shipSizes = [5];
+// const coordinates = [[5, 9]];
 
 class GameEngine {
   startGame() {
@@ -24,7 +24,7 @@ class GameEngine {
       const ship = new Ship(shipSizes[i]);
       const row = coordinates[i][0],
         col = coordinates[i][1];
-      playerGameboard.placeShip(row, col, 'vertical', ship);
+      playerGameboard.placeShip(row, col, 'horizontal', ship);
     }
 
     console.log(playerGameboard.getBoard());
