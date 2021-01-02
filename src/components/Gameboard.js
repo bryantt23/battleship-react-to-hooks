@@ -15,6 +15,14 @@ class Gameboard {
   }
 
   getBoard() {
+    for (var i = 0; i < this.gameBoard.length; i++) {
+      let row = '';
+      for (var j = 0; j < this.gameBoard[0].length; j++) {
+        row += this.gameBoard[i][j] + ' ';
+      }
+      console.log(row);
+    }
+
     return this.gameBoard;
   }
 
@@ -35,14 +43,14 @@ class Gameboard {
   }
 
   setShip(startingRow, startingCol, orientation, ship) {
-    const { shipLength } = ship;
+    const { length } = ship;
     if (orientation === 'vertical') {
-      for (let i = startingRow; i <= startingRow + shipLength; i++) {
+      for (let i = startingRow; i < startingRow + length; i++) {
         this.gameBoard[i][startingCol] = ship;
       }
     } else {
       //horizontal
-      for (let i = startingCol; i <= startingCol + shipLength; i++) {
+      for (let i = startingCol; i < startingCol + length; i++) {
         this.gameBoard[startingRow][i] = ship;
       }
     }
@@ -56,40 +64,25 @@ class Gameboard {
   }
 
   isValidShipPosition(startingRow, startingCol, orientation, ship) {
-    const { shipLength } = ship;
+    const { length } = ship;
 
     if (orientation === 'vertical') {
-      for (let i = startingRow; i <= startingRow + shipLength; i++) {
-        this.gameBoard[i][startingCol] = ship;
-      }
-    } else {
-      //horizontal
-      for (let i = startingCol; i <= startingCol + shipLength; i++) {
-        this.gameBoard[startingRow][i] = ship;
-      }
-    }
-  }
-
-  isValidShipPosition(startingRow, startingCol, orientation, ship) {
-    const { shipLength } = ship;
-
-    if (orientation === 'vertical') {
-      if (startingRow + shipLength >= boardSize) {
+      if (startingRow + length > boardSize) {
         return false;
       }
 
-      for (let i = startingRow; i <= startingRow + shipLength; i++) {
+      for (let i = startingRow; i < startingRow + length; i++) {
         if (this.gameBoard[i][startingCol] !== undefined) {
           return false;
         }
       }
     } else {
       //horizontal
-      if (startingCol + shipLength >= boardSize) {
+      if (startingCol + length > boardSize) {
         return false;
       }
 
-      for (let i = startingCol; i <= startingCol + shipLength; i++) {
+      for (let i = startingCol; i < startingCol + length; i++) {
         if (this.gameBoard[startingRow][i] !== undefined) {
           return false;
         }
