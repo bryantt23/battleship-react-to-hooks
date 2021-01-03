@@ -2,8 +2,9 @@ import Player from './Player';
 import Ship from './Ship';
 import Gameboard from './Gameboard';
 
+//TODO move this into app and make that the gameengine
 // const shipSizes=[2, 3, 3, 4, 5]
-const shipSizes = [10, 4, 1];
+const shipSizes = [1, 4, 1];
 const coordinates = [
   [0, 0],
   [3, 3],
@@ -22,6 +23,8 @@ const coordinates2 = [
 // const coordinates = [[5, 9]];
 
 class GameEngine {
+  player;
+  computer;
   constructor() {}
 
   placeShips() {
@@ -41,8 +44,8 @@ class GameEngine {
   }
 
   startGame() {
-    const player = new Player('player');
-    const computer = new Player('computer');
+    this.player = new Player('player');
+    this.computer = new Player('computer');
     this.playerGameboard = new Gameboard();
     this.computerGameboard = new Gameboard();
     this.placeShips();

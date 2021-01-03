@@ -24,7 +24,8 @@ class App extends Component {
       playerBoard: [],
       computerBoard: [],
       allShipsSunk: false,
-      winner: null
+      winner: null,
+      isPlayerTurn: true
     };
   }
 
@@ -43,68 +44,78 @@ class App extends Component {
       playerBoard: [...this.gameEngine.playerGameboard.getBoard()],
       computerBoard: [...this.gameEngine.computerGameboard.getBoard()]
     });
-  }
-  /*
-plan
-first render my board with ships
-next render computer board with sea
 
-need to think about how to deal with onclick and state
-i can render a component for every element in the array
-the component can get the state from the array, hit, miss, sea
-
-what is the source of truth?
-the source of truth comes from the game board
-the game board has all of the information i need
-including if all ships have been sunk
-
-how to render based on that?
-maybe the component can render on the gameboard having the state of ship, hit, miss
-if it has ship it should be the sea 
-if it is hit or miss then it should render that
-how to deal with onclick?
-if it is hit or miss then it doesn't need an onclick or it can be disabled
-
-maybe i'll just render it first
-each position will store its row & col with a call back
-i'll take it from there
-or maybe each component and have its own state passed from props that makes it decide what to render
-and if it's hit or miss i'll just disable the component
-i'll try this
-
-but first render and take in row & col & print that
-
-i'll render my board first with the ships showing
-
-then i'll deal with the computer board
-which is just a bunch of SEA stuff
-later create a cheat board to see the computer's board
-
-
-plan again
-will use app state to track which parts have been attacked
-will start with the computer board
-then later work on player board
-
-
-
-
-*/
-  testFunction(i, j, gameBoard, board) {
-    console.log(gameBoard[i][j]);
-    this.renderBoard(board);
+    // if (!this.state.winner) {
+    //   if (!this.state.isPlayerTurn) {
+    //     if (
+    //       !this.gameEngine.computer.makePlay(
+    //         this.gameEngine.computerGameboard,
+    //         'computer',
+    //         'computer'
+    //       )
+    //     )
+    //       this.setState({ isPlayerTurn: true });
+    //   } else {
+    //   }
+    // }
   }
 
+  computerMove() {
+    const [i, j] = this.gameEngine.computer.makePlay(this.playerBoard);
+
+    const attackedBoard = [...this.state.playerAttackedPositions];
+
+    if (this.computerBoard.isValidAttack(i, j, attackedBoard)) {
+      console.log('valid computer move');
+
+      const boardState = this.state.playerBoard;
+      const [
+        updatedBoardState,
+        updatedAttackBoard
+      ] = this.playerBoard.receiveAttack(i, j, boardState, attackedBoard);
+
+      //use this & board to determine winner
+
+      console.log('all sunk', this.playerBoard.allShipsSunk());
+      const allShipsSunk = this.playerBoard.allShipsSunk();
+      if (allShipsSunk) {
+        let winner;
+        // if (board === 'playerBoard') {
+        winner = 'computer wins!';
+        // } else {
+        //   winner = 'Computer wins!';
+        // }
+        this.setState({
+          allShipsSunk: true,
+          winner: winner
+        });
+        return;
+      }
+
+      this.setState({
+        playerAttackedPositions: updatedAttackBoard,
+        playerBoard: updatedBoardState,
+        isPlayerTurn: true
+      });
+    } else {
+      console.log('invalid computer move');
+      this.computerMove();
+    }
+  }
+
+  //player move
+  // can change this, only the player uses this function
+  //computerBoard argument
   updateBoardSectionState(i, j, board) {
     // move this into object
     // delegate this stuff into receive attack
 
     let attackedProperty;
-    if (board === 'playerBoard') {
-      attackedProperty = 'playerAttackedPositions';
-    } else {
-      attackedProperty = 'computerAttackedPositions';
-    }
+    // if (board === 'playerBoard') {
+    //   attackedProperty = 'playerAttackedPositions';
+    // } else {
+    attackedProperty = 'computerAttackedPositions';
+    // }
 
     const attackedBoard = this.state[attackedProperty];
 
@@ -124,49 +135,31 @@ then later work on player board
       const allShipsSunk = this[board].allShipsSunk();
       if (allShipsSunk) {
         let winner;
-        if (board === 'playerBoard') {
-          winner = 'Player wins!';
-        } else {
-          winner = 'Computer wins!';
-        }
+        // if (board === 'playerBoard') {
+        winner = 'Player wins!';
+        // } else {
+        //   winner = 'Computer wins!';
+        // }
         this.setState({
           allShipsSunk: true,
           winner: winner
         });
-
         return;
       }
 
-      this.setState({
-        playerAttackedPositions: updatedAttackBoard,
-        [board]: updatedBoardState
-      });
+      this.setState(
+        {
+          computerAttackedPositions: updatedAttackBoard,
+          [board]: updatedBoardState,
+          isPlayerTurn: !this.state.isPlayerTurn
+        },
+        () => {
+          this.computerMove();
+        }
+      );
     } else {
       console.log('invalid move');
     }
-
-    //should be true if it's false my disabled is broken
-
-    // const validAttack = this[board].receiveAttack(i, j, boardState);
-
-    // if (validAttack) {
-    //   console.log('valid move');
-    // } else {
-    //   console.log('invalid move');
-    // }
-
-    // if (boardState[i][j] === undefined) {
-    //   //miss
-    //   boardState[i][j] = 'MISS';
-    // } else {
-    //   //hit
-    //   boardState[i][j] = 'HIT';
-    // }
-    // attacked[i][j] = true;
-    // this.setState({
-    //   playerAttackedPositions: attacked,
-    //   [board]: boardState
-    // });
   }
 
   renderPlayerUi() {
@@ -182,13 +175,7 @@ then later work on player board
           <BoardSection
             attacked={this.state.playerAttackedPositions[i][j]}
             status={this.state.playerBoard[i][j]}
-            updateBoardSectionState={() => {
-              this.updateBoardSectionState(i, j, 'playerBoard');
-              // console.log(i + ' ' + j);
-              // console.log(board.receiveAttack(i, j));
-              // console.log(gameBoard[i][j]);
-              // this.testFunction(i, j, gameBoard, board);
-            }}
+            updateBoardSectionState={() => {}}
           />
         );
       }

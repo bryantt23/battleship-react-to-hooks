@@ -1,4 +1,4 @@
-const boardSize = 10;
+const boardSize = 3;
 
 class Gameboard {
   constructor() {
