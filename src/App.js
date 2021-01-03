@@ -22,7 +22,9 @@ class App extends Component {
       playerAttackedPositions: arr,
       computerAttackedPositions: arr,
       playerBoard: [],
-      computerBoard: []
+      computerBoard: [],
+      allShipsSunk: false,
+      winner: null
     };
   }
 
@@ -38,8 +40,8 @@ class App extends Component {
     console.log(this.gameEngine.playerGameboard.getBoard());
 
     this.setState({
-      playerBoard: [...this.gameEngine.computerGameboard.getBoard()],
-      computerBoard: [...this.gameEngine.playerGameboard.getBoard()]
+      playerBoard: [...this.gameEngine.playerGameboard.getBoard()],
+      computerBoard: [...this.gameEngine.computerGameboard.getBoard()]
     });
   }
   /*
@@ -115,6 +117,25 @@ then later work on player board
         boardState,
         attackedBoard
       );
+
+      //use this & board to determine winner
+
+      console.log('all sunk', this[board].allShipsSunk());
+      const allShipsSunk = this[board].allShipsSunk();
+      if (allShipsSunk) {
+        let winner;
+        if (board === 'playerBoard') {
+          winner = 'Player wins!';
+        } else {
+          winner = 'Computer wins!';
+        }
+        this.setState({
+          allShipsSunk: true,
+          winner: winner
+        });
+
+        return;
+      }
 
       this.setState({
         playerAttackedPositions: updatedAttackBoard,

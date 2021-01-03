@@ -10,11 +10,12 @@ const coordinates = [
   [9, 9]
 ];
 
-const shipSizes2 = [5, 4, 3];
+// const shipSizes2 = [5, 4, 3];
+const shipSizes2 = [2];
 const coordinates2 = [
-  [0, 0],
-  [3, 3],
-  [6, 6]
+  [0, 0]
+  // [3, 3],
+  // [6, 6]
 ];
 
 // const shipSizes = [5];

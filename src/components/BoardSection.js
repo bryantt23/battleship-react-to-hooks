@@ -15,11 +15,12 @@ export class BoardSection extends Component {
     // console.log(message);
     return (
       <td
-        disabled={attacked}
+        // disabled={attacked}
         style={{ height: 50, width: 50, display: 'inlineBlock' }}
         onClick={() => {
           // https:stackoverflow.com/questions/51549115/best-way-to-disabled-div-onclick-in-react
-          !attacked && this.props.updateBoardSectionState();
+          // !attacked &&
+          this.props.updateBoardSectionState();
         }}
       >
         {message}
