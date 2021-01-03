@@ -12,7 +12,7 @@ export class BoardSection extends Component {
     } else {
       message = status; //should be a string
     }
-    console.log(message);
+    // console.log(message);
     return (
       <td
         disabled={attacked}

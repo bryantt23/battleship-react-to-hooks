@@ -11,6 +11,10 @@ for (let i = 0; i < boardSize; i++) {
 }
 
 class App extends Component {
+  gameEngine;
+  playerBoard;
+  computerBoard;
+
   constructor() {
     super();
     this.state = {
@@ -23,18 +27,19 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const g = new GameEngine();
-    g.startGame();
-    const playerGameBoard = g.playerGameboard.getBoard();
+    this.gameEngine = new GameEngine();
+    this.gameEngine.startGame();
+    this.playerBoard = this.gameEngine.playerGameboard;
+    this.computerBoard = this.gameEngine.computerGameboard;
     // const playerBoardUi = this.renderBoard(g.playerGameboard, 'player');
     // console.log(g.playerGameboard);
-    console.log(g.computerGameboard.getBoard());
+    console.log(this.gameEngine.computerGameboard.getBoard());
     // console.log(g.playerGameboard);
-    console.log(g.playerGameboard.getBoard());
+    console.log(this.gameEngine.playerGameboard.getBoard());
 
     this.setState({
-      playerBoard: [...g.computerGameboard.getBoard()],
-      computerBoard: [...g.playerGameboard.getBoard()]
+      playerBoard: [...this.gameEngine.computerGameboard.getBoard()],
+      computerBoard: [...this.gameEngine.playerGameboard.getBoard()]
     });
   }
   /*
@@ -88,93 +93,59 @@ then later work on player board
     this.renderBoard(board);
   }
 
-  // renderBoard(board) {
-  //   const gameBoard = board.getBoard();
-  //   console.log(gameBoard);
-
-  //   const dom = [];
-  //   let length = gameBoard.length;
-  //   for (let i = 0; i < length; i++) {
-  //     let arr = [];
-  //     for (let j = 0; j < length; j++) {
-  //       const val = gameBoard[i][j];
-  //       console.log(val);
-  //       arr.push(
-  //         <BoardSection
-  //           boardState={gameBoard[i][j]}
-  //           getLocation={() => {
-  //             console.log(i + ' ' + j);
-  //             console.log(board.receiveAttack(i, j));
-  //             console.log(gameBoard[i][j]);
-  //             this.testFunction(i, j, gameBoard, board);
-  //           }}
-  //         />
-  //       );
-  //     }
-  //     const div = <tr>{arr}</tr>;
-  //     dom.push(div);
-  //   }
-  //   console.log(dom);
-  //   return dom;
-  // }
-
-  // renderBoard(board, player) {
-  //   const gameBoard = board.getBoard();
-  //   console.log(gameBoard);
-
-  //   const dom = [];
-  //   let length = gameBoard.length;
-  //   for (let i = 0; i < length; i++) {
-  //     let arr = [];
-  //     for (let j = 0; j < length; j++) {
-  //       const val = gameBoard[i][j];
-  //       console.log(val);
-  //       arr.push(
-  //         <BoardSection
-  //           boardState={gameBoard[i][j]}
-  //           getLocation={() => {
-  //             console.log(i + ' ' + j);
-  //             console.log(board.receiveAttack(i, j));
-  //             console.log(gameBoard[i][j]);
-  //             this.testFunction(i, j, gameBoard, board);
-  //           }}
-  //         />
-  //       );
-  //     }
-  //     const div = <tr>{arr}</tr>;
-  //     dom.push(div);
-  //   }
-  //   console.log(dom);
-  //   return dom;
-  // }
-
-  copyArr(computer, player) {
-    console.log(computer + ' ' + player);
-    this.setState({
-      playerBoard: [...computer],
-      computerBoard: [...player]
-    });
-  }
-
   updateBoardSectionState(i, j, board) {
     // move this into object
     // delegate this stuff into receive attack
 
-    //should be true if it's false my disabled is broken
-    const attacked = this.state.playerAttackedPositions;
-    const boardState = this.state[board];
-    if (boardState[i][j] === undefined) {
-      //miss
-      boardState[i][j] = 'MISS';
+    let attackedProperty;
+    if (board === 'playerBoard') {
+      attackedProperty = 'playerAttackedPositions';
     } else {
-      //hit
-      boardState[i][j] = 'HIT';
+      attackedProperty = 'computerAttackedPositions';
     }
-    attacked[i][j] = true;
-    this.setState({
-      playerAttackedPositions: attacked,
-      [board]: boardState
-    });
+
+    const attackedBoard = this.state[attackedProperty];
+
+    if (this[board].isValidAttack(i, j, attackedBoard)) {
+      console.log('valid move');
+      const boardState = this.state[board];
+      const [updatedBoardState, updatedAttackBoard] = this[board].receiveAttack(
+        i,
+        j,
+        boardState,
+        attackedBoard
+      );
+
+      this.setState({
+        playerAttackedPositions: updatedAttackBoard,
+        [board]: updatedBoardState
+      });
+    } else {
+      console.log('invalid move');
+    }
+
+    //should be true if it's false my disabled is broken
+
+    // const validAttack = this[board].receiveAttack(i, j, boardState);
+
+    // if (validAttack) {
+    //   console.log('valid move');
+    // } else {
+    //   console.log('invalid move');
+    // }
+
+    // if (boardState[i][j] === undefined) {
+    //   //miss
+    //   boardState[i][j] = 'MISS';
+    // } else {
+    //   //hit
+    //   boardState[i][j] = 'HIT';
+    // }
+    // attacked[i][j] = true;
+    // this.setState({
+    //   playerAttackedPositions: attacked,
+    //   [board]: boardState
+    // });
   }
 
   renderPlayerUi() {

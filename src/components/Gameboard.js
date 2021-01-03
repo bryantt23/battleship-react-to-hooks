@@ -26,20 +26,35 @@ class Gameboard {
     return this.gameBoard;
   }
 
+  isValidAttack(i, j, attackedPositions) {
+    return !attackedPositions[i][j];
+  }
+
   //try boolean to know if turn is over
-  receiveAttack(row, col) {
-    const gameboardPosition = this.gameBoard[row][col];
-    if (gameboardPosition === 'MISS' || gameboardPosition === 'HIT') {
-      return false;
-    }
-    if (typeof this.gameBoard[row][col] === 'object') {
-      const ship = this.gameBoard[row][col].hit();
-      this.gameBoard[row][col] = 'HIT';
+  receiveAttack(i, j, boardState, attackedBoard) {
+    if (boardState[i][j] === undefined) {
+      //miss
+      boardState[i][j] = 'MISS';
     } else {
-      //should be undefined
-      this.gameBoard[row][col] = 'MISS';
+      //hit
+      boardState[i][j] = 'HIT';
     }
-    return true;
+    attackedBoard[i][j] = true;
+
+    return [boardState, attackedBoard];
+
+    // const gameboardPosition = this.gameBoard[row][col];
+    // if (gameboardPosition === 'MISS' || gameboardPosition === 'HIT') {
+    //   return false;
+    // }
+    // if (typeof this.gameBoard[row][col] === 'object') {
+    //   const ship = this.gameBoard[row][col].hit();
+    //   this.gameBoard[row][col] = 'HIT';
+    // } else {
+    //   //should be undefined
+    //   this.gameBoard[row][col] = 'MISS';
+    // }
+    // return true;
   }
 
   setShip(startingRow, startingCol, orientation, ship) {
