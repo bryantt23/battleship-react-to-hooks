@@ -41,7 +41,7 @@ class App extends Component {
     // console.log(g.playerGameboard);
     console.log(this.gameEngine.playerGameboard.getBoard());
 
-    const boardSize = 3;
+    const boardSize = this.gameEngine.playerGameboard.getBoard().length;
 
     let arr = [];
     for (let i = 0; i < boardSize; i++) {
@@ -201,7 +201,12 @@ class App extends Component {
     for (let i = 0; i < length; i++) {
       let arr = [];
       for (let j = 0; j < length; j++) {
-        arr.push(<BoardSection status={this.state.computerBoard[i][j]} />);
+        arr.push(
+          <BoardSection
+            status={this.state.computerBoard[i][j]}
+            updateBoardSectionState={() => {}}
+          />
+        );
       }
       const div = <tr>{arr}</tr>;
       dom.push(div);

@@ -1,10 +1,10 @@
-const boardSize = 3;
-
 class Gameboard {
+  boardSize = 10;
+
   constructor() {
     let arr = [];
-    for (let i = 0; i < boardSize; i++) {
-      arr.push(new Array(boardSize));
+    for (let i = 0; i < this.boardSize; i++) {
+      arr.push(new Array(this.boardSize));
     }
     this.gameBoard = arr;
     this.ships = [];
@@ -61,17 +61,17 @@ class Gameboard {
   }
 
   placeShip(startingRow, startingCol, orientation, ship) {
-    if (this.isValidShipPosition(startingRow, startingCol, orientation, ship)) {
-      this.setShip(startingRow, startingCol, orientation, ship);
-      this.ships.push(ship);
-    }
+    // if (this.isValidShipPosition(startingRow, startingCol, orientation, ship)) {
+    this.setShip(startingRow, startingCol, orientation, ship);
+    this.ships.push(ship);
+    // }
   }
 
   isValidShipPosition(startingRow, startingCol, orientation, ship) {
     const { length } = ship;
 
     if (orientation === 'vertical') {
-      if (startingRow + length > boardSize) {
+      if (startingRow + length > this.boardSize) {
         return false;
       }
 
@@ -82,7 +82,7 @@ class Gameboard {
       }
     } else {
       //horizontal
-      if (startingCol + length > boardSize) {
+      if (startingCol + length > this.boardSize) {
         return false;
       }
 
