@@ -19,7 +19,7 @@ export class BoardSection extends Component {
         style={{ height: 50, width: 50, display: 'inlineBlock' }}
         onClick={() => {
           // https:stackoverflow.com/questions/51549115/best-way-to-disabled-div-onclick-in-react
-          !attacked && this.props.getLocation();
+          !attacked && this.props.updateBoardSectionState();
         }}
       >
         {message}

@@ -216,7 +216,7 @@ then later work on player board
             isComputer={true}
             attacked={this.state.computerAttackedPositions[i][j]}
             status={this.state.computerBoard[i][j]}
-            getLocation={() => {
+            updateBoardSectionState={() => {
               this.updateBoardSectionState(i, j, 'computerBoard');
             }}
           />
