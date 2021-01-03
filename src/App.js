@@ -3,12 +3,12 @@ import './App.css';
 import GameEngine from './components/GameEngine';
 import BoardSection from './components/BoardSection';
 
-const boardSize = 10;
+// const boardSize = 3;
 
-let arr = [];
-for (let i = 0; i < boardSize; i++) {
-  arr.push(new Array(boardSize));
-}
+// let arr = [];
+// for (let i = 0; i < boardSize; i++) {
+//   arr.push(new Array(boardSize));
+// }
 
 class App extends Component {
   gameEngine;
@@ -19,8 +19,8 @@ class App extends Component {
     super();
     this.state = {
       cheat: false,
-      playerAttackedPositions: arr,
-      computerAttackedPositions: arr,
+      playerPositionsThatHaveBeenAttacked: [],
+      computerPositionsThatHaveBeenAttacked: [],
       playerBoard: [],
       computerBoard: [],
       allShipsSunk: false,
@@ -40,9 +40,22 @@ class App extends Component {
     // console.log(g.playerGameboard);
     console.log(this.gameEngine.playerGameboard.getBoard());
 
+    const boardSize = 3;
+
+    let arr = [];
+    for (let i = 0; i < boardSize; i++) {
+      arr.push(new Array(boardSize));
+    }
+    let arr2 = JSON.parse(JSON.stringify(arr));
+    // for (let i = 0; i < boardSize; i++) {
+    //   arr2.push(new Array(boardSize));
+    // }
+
     this.setState({
       playerBoard: [...this.gameEngine.playerGameboard.getBoard()],
-      computerBoard: [...this.gameEngine.computerGameboard.getBoard()]
+      computerBoard: [...this.gameEngine.computerGameboard.getBoard()],
+      playerPositionsThatHaveBeenAttacked: arr,
+      computerPositionsThatHaveBeenAttacked: arr2
     });
 
     // if (!this.state.winner) {
@@ -63,40 +76,42 @@ class App extends Component {
   computerMove() {
     const [i, j] = this.gameEngine.computer.makePlay(this.playerBoard);
 
-    const attackedBoard = [...this.state.playerAttackedPositions];
+    const attackedBoard = [...this.state.playerPositionsThatHaveBeenAttacked];
 
-    if (this.computerBoard.isValidAttack(i, j, attackedBoard)) {
-      console.log('valid computer move');
+    if (this.playerBoard.isValidAttack(i, j, attackedBoard)) {
+      this.updateBoardSectionState(i, j, 'playerBoard');
 
-      const boardState = this.state.playerBoard;
-      const [
-        updatedBoardState,
-        updatedAttackBoard
-      ] = this.playerBoard.receiveAttack(i, j, boardState, attackedBoard);
+      // console.log('valid computer move');
 
-      //use this & board to determine winner
+      // const boardState = this.state.playerBoard;
+      // const [
+      //   updatedBoardState,
+      //   updatedAttackBoard
+      // ] = this.playerBoard.receiveAttack(i, j, boardState, attackedBoard);
 
-      console.log('all sunk', this.playerBoard.allShipsSunk());
-      const allShipsSunk = this.playerBoard.allShipsSunk();
-      if (allShipsSunk) {
-        let winner;
-        // if (board === 'playerBoard') {
-        winner = 'computer wins!';
-        // } else {
-        //   winner = 'Computer wins!';
-        // }
-        this.setState({
-          allShipsSunk: true,
-          winner: winner
-        });
-        return;
-      }
+      // //use this & board to determine winner
 
-      this.setState({
-        playerAttackedPositions: updatedAttackBoard,
-        playerBoard: updatedBoardState,
-        isPlayerTurn: true
-      });
+      // console.log('all sunk', this.playerBoard.allShipsSunk());
+      // const allShipsSunk = this.playerBoard.allShipsSunk();
+      // if (allShipsSunk) {
+      //   let winner;
+      //   // if (board === 'playerBoard') {
+      //   winner = 'computer wins!';
+      //   // } else {
+      //   //   winner = 'Computer wins!';
+      //   // }
+      //   this.setState({
+      //     allShipsSunk: true,
+      //     winner: winner
+      //   });
+      //   return;
+      // }
+
+      // this.setState({
+      //   playerPositionsThatHaveBeenAttacked: updatedAttackBoard,
+      //   playerBoard: updatedBoardState,
+      //   isPlayerTurn: true
+      // });
     } else {
       console.log('invalid computer move');
       this.computerMove();
@@ -111,11 +126,11 @@ class App extends Component {
     // delegate this stuff into receive attack
 
     let attackedProperty;
-    // if (board === 'playerBoard') {
-    //   attackedProperty = 'playerAttackedPositions';
-    // } else {
-    attackedProperty = 'computerAttackedPositions';
-    // }
+    if (board === 'playerBoard') {
+      attackedProperty = 'playerPositionsThatHaveBeenAttacked';
+    } else {
+      attackedProperty = 'computerPositionsThatHaveBeenAttacked';
+    }
 
     const attackedBoard = this.state[attackedProperty];
 
@@ -135,11 +150,11 @@ class App extends Component {
       const allShipsSunk = this[board].allShipsSunk();
       if (allShipsSunk) {
         let winner;
-        // if (board === 'playerBoard') {
-        winner = 'Player wins!';
-        // } else {
-        //   winner = 'Computer wins!';
-        // }
+        if (board === 'playerBoard') {
+          winner = 'Player wins!';
+        } else {
+          winner = 'Computer wins!';
+        }
         this.setState({
           allShipsSunk: true,
           winner: winner
@@ -149,12 +164,12 @@ class App extends Component {
 
       this.setState(
         {
-          computerAttackedPositions: updatedAttackBoard,
+          [attackedProperty]: updatedAttackBoard,
           [board]: updatedBoardState,
           isPlayerTurn: !this.state.isPlayerTurn
         },
         () => {
-          this.computerMove();
+          if (!this.state.isPlayerTurn) this.computerMove();
         }
       );
     } else {
@@ -173,7 +188,7 @@ class App extends Component {
           //attacked can be hit or miss
           //not attacked will just be the ship or sea
           <BoardSection
-            attacked={this.state.playerAttackedPositions[i][j]}
+            attacked={this.state.playerPositionsThatHaveBeenAttacked[i][j]}
             status={this.state.playerBoard[i][j]}
             updateBoardSectionState={() => {}}
           />
@@ -196,7 +211,7 @@ class App extends Component {
         arr.push(
           <BoardSection
             isComputer={true}
-            attacked={this.state.computerAttackedPositions[i][j]}
+            attacked={this.state.computerPositionsThatHaveBeenAttacked[i][j]}
             status={this.state.computerBoard[i][j]}
             updateBoardSectionState={() => {
               this.updateBoardSectionState(i, j, 'computerBoard');
@@ -226,7 +241,6 @@ class App extends Component {
 
     return (
       <div className='App'>
-        {JSON.stringify(this.state)}
         <h3>Player Board</h3>
         {/* {JSON.stringify(this.state.playerBoard)} */}
         {playerBoardUi}
@@ -241,6 +255,11 @@ class App extends Component {
           {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
         </button>
         {/* {this.state.cheat && computerBoardUi} */}
+        {JSON.stringify(this.state)}
+        <br></br>
+        {JSON.stringify(this.state.playerPositionsThatHaveBeenAttacked)}
+        <br></br>
+        {JSON.stringify(this.state.computerPositionsThatHaveBeenAttacked)}
       </div>
     );
   }
