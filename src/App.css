@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+/* https://stackoverflow.com/questions/51549115/best-way-to-disabled-div-onclick-in-react */
+div[disabled] {
+  pointer-events: none;
+  opacity: 0.7;
+}

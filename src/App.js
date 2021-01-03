@@ -25,7 +25,8 @@ class App extends Component {
       computerBoard: [],
       allShipsSunk: false,
       winner: null,
-      isPlayerTurn: true
+      isPlayerTurn: true,
+      disabled: false
     };
   }
 
@@ -80,38 +81,6 @@ class App extends Component {
 
     if (this.playerBoard.isValidAttack(i, j, attackedBoard)) {
       this.updateBoardSectionState(i, j, 'playerBoard');
-
-      // console.log('valid computer move');
-
-      // const boardState = this.state.playerBoard;
-      // const [
-      //   updatedBoardState,
-      //   updatedAttackBoard
-      // ] = this.playerBoard.receiveAttack(i, j, boardState, attackedBoard);
-
-      // //use this & board to determine winner
-
-      // console.log('all sunk', this.playerBoard.allShipsSunk());
-      // const allShipsSunk = this.playerBoard.allShipsSunk();
-      // if (allShipsSunk) {
-      //   let winner;
-      //   // if (board === 'playerBoard') {
-      //   winner = 'computer wins!';
-      //   // } else {
-      //   //   winner = 'Computer wins!';
-      //   // }
-      //   this.setState({
-      //     allShipsSunk: true,
-      //     winner: winner
-      //   });
-      //   return;
-      // }
-
-      // this.setState({
-      //   playerPositionsThatHaveBeenAttacked: updatedAttackBoard,
-      //   playerBoard: updatedBoardState,
-      //   isPlayerTurn: true
-      // });
     } else {
       console.log('invalid computer move');
       this.computerMove();
@@ -151,13 +120,14 @@ class App extends Component {
       if (allShipsSunk) {
         let winner;
         if (board === 'playerBoard') {
-          winner = 'Player wins!';
-        } else {
           winner = 'Computer wins!';
+        } else {
+          winner = 'Player wins!';
         }
         this.setState({
           allShipsSunk: true,
-          winner: winner
+          winner: winner,
+          disabled: true
         });
         return;
       }
@@ -225,6 +195,25 @@ class App extends Component {
     return dom;
   }
 
+  renderComputerUiCheat() {
+    const dom = [];
+    let length = this.state.computerBoard.length;
+    for (let i = 0; i < length; i++) {
+      let arr = [];
+      for (let j = 0; j < length; j++) {
+        arr.push(
+          <BoardSection
+            attacked={this.state.playerPositionsThatHaveBeenAttacked[i][j]}
+            status={this.state.playerBoard[i][j]}
+          />
+        );
+      }
+      const div = <tr>{arr}</tr>;
+      dom.push(div);
+    }
+    return dom;
+  }
+
   render() {
     // const g = new GameEngine();
 
@@ -234,6 +223,7 @@ class App extends Component {
     // const playerGameBoard = g.playerBoard.getBoard();
     const playerBoardUi = this.renderPlayerUi();
     const computerBoardUi = this.renderComputerUi();
+    const computerBoardUiCheat = this.renderComputerUiCheat();
 
     // const computerBoard = g.computerBoard.getBoard();
     // const computerBoardUi = this.renderBoard(g.computerGameboard, 'computer');
@@ -241,12 +231,15 @@ class App extends Component {
 
     return (
       <div className='App'>
-        <h3>Player Board</h3>
-        {/* {JSON.stringify(this.state.playerBoard)} */}
-        {playerBoardUi}
-        <h3>Computer Board</h3>
-        {computerBoardUi}
-        <br />
+        <div disabled={this.state.winner !== null} id='gameboard'>
+          <h3>Player Board</h3>
+          {/* {JSON.stringify(this.state.playerBoard)} */}
+          {playerBoardUi}
+          <h3>Computer Board</h3>
+          {computerBoardUi}
+          <br />
+        </div>
+        {this.state.disabled ? <h2>{this.state.winner}</h2> : ''}
         <button
           onClick={() => {
             this.setState({ cheat: !this.state.cheat });
@@ -254,7 +247,7 @@ class App extends Component {
         >
           {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
         </button>
-        {/* {this.state.cheat && computerBoardUi} */}
+        {this.state.cheat && computerBoardUiCheat}
         {JSON.stringify(this.state)}
         <br></br>
         {JSON.stringify(this.state.playerPositionsThatHaveBeenAttacked)}
