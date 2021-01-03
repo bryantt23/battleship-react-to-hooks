@@ -157,6 +157,9 @@ then later work on player board
   }
 
   updateBoardSectionState(i, j, board) {
+    // move this into object
+    // delegate this stuff into receive attack
+
     //should be true if it's false my disabled is broken
     const attacked = this.state.playerAttackedPositions;
     const boardState = this.state[board];
