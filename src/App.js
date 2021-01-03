@@ -201,12 +201,7 @@ class App extends Component {
     for (let i = 0; i < length; i++) {
       let arr = [];
       for (let j = 0; j < length; j++) {
-        arr.push(
-          <BoardSection
-            attacked={this.state.playerPositionsThatHaveBeenAttacked[i][j]}
-            status={this.state.playerBoard[i][j]}
-          />
-        );
+        arr.push(<BoardSection status={this.state.computerBoard[i][j]} />);
       }
       const div = <tr>{arr}</tr>;
       dom.push(div);
