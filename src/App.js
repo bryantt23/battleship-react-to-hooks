@@ -21,6 +21,9 @@ function App() {
   const [playerBoard, setPlayerBoard] = useState(
     gameEngine.playerGameboard.getBoard()
   );
+  const [computerBoardInstance, setComputerBoardInstance] = useState(
+    gameEngine.computerGameboard
+  );
   const [playerBoardInstance, setPlayerBoardInstance] = useState(
     gameEngine.playerGameboard
   );
@@ -33,6 +36,13 @@ function App() {
     setComputerPositionsThatHaveBeenAttacked
   ] = useState([...arr]);
   const [cheat, setCheat] = useState(true);
+  const [playerBoardUi, setPlayerBoardUi] = useState([]);
+  const [computerBoardUi, setComputerBoardUi] = useState([]);
+
+  useEffect(() => {
+    setPlayerBoardUi(renderPlayerUi());
+    setComputerBoardUi(renderComputerUi());
+  }, [playerBoard, computerBoard]);
 
   const updateBoardSectionState = (i, j, board) => {
     console.log(
@@ -41,16 +51,44 @@ function App() {
       j,
       board
     );
-    /*
-    let attackedProperty;
+    let attackedProperty, attackedBoard, thisBoard, boardState;
     if (board === 'playerBoard') {
       attackedProperty = 'playerPositionsThatHaveBeenAttacked';
+      attackedBoard = playerPositionsThatHaveBeenAttacked;
+      thisBoard = playerBoardInstance;
+      boardState = playerBoard;
     } else {
       attackedProperty = 'computerPositionsThatHaveBeenAttacked';
+      attackedBoard = computerPositionsThatHaveBeenAttacked;
+      thisBoard = computerBoardInstance;
+      boardState = computerBoard;
     }
 
-    const attackedBoard = this.state[attackedProperty];
+    if (thisBoard.isValidAttack(i, j, attackedBoard)) {
+      console.log('valid move');
+      // const boardState = this.state[board];
+      const [updatedBoardState, updatedAttackBoard] = thisBoard.receiveAttack(
+        i,
+        j,
+        boardState,
+        attackedBoard
+      );
+      console.log(
+        '🚀 ~ file: App.js:64 ~ updateBoardSectionState ~ updatedBoardState, updatedAttackBoard',
+        updatedBoardState,
+        updatedAttackBoard
+      );
 
+      if (board === 'playerBoard') {
+        setPlayerBoard(updatedBoardState);
+      } else {
+        setComputerBoard([...updatedBoardState]);
+      }
+    } else {
+      console.log('invalid move');
+    }
+
+    /*
     if (this[board].isValidAttack(i, j, attackedBoard)) {
       console.log('valid move');
       const boardState = this.state[board];
@@ -161,14 +199,16 @@ function App() {
     return dom;
   };
 
+  const computerBoardUiCheat = renderComputerUiCheat();
+
   return (
     <div className='App'>
       <h1>Battleship</h1>
       {/* <div disabled={this.state.winner !== null} id='gameboard'> */}
       <h3>Player Board</h3>
-      {renderPlayerUi()}
+      {playerBoardUi}
       <h3>Computer Board</h3>
-      {renderComputerUi()}
+      {computerBoardUi}
       <br />
       {/* {this.state.disabled ? <h2>{this.state.winner}</h2> : ''} */}
       <button
@@ -178,7 +218,7 @@ function App() {
       >
         {cheat ? 'Hide ' : 'Show '} computer's ships{' '}
       </button>
-      {cheat && renderComputerUiCheat()}
+      {cheat && computerBoardUiCheat}
     </div>
   );
 }
