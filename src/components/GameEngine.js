@@ -3,12 +3,14 @@ import Ship from './Ship';
 import Gameboard from './Gameboard';
 
 //TODO move this into app and make that the gameengine
-const shipSizes = [3, 4, 5];
+const shipSizes = [1, 2 /*3, 4, 5*/];
 
 class GameEngine {
   player;
   computer;
-  constructor() {}
+  constructor(boardSize) {
+    this.boardSize = boardSize;
+  }
 
   getCoordinates() {
     const size = this.playerGameboard.boardSize;
@@ -78,8 +80,8 @@ class GameEngine {
   startGame() {
     this.player = new Player('player');
     this.computer = new Player('computer');
-    this.playerGameboard = new Gameboard(10);
-    this.computerGameboard = new Gameboard(10);
+    this.playerGameboard = new Gameboard(this.boardSize);
+    this.computerGameboard = new Gameboard(this.boardSize);
     this.placeShips();
 
     // console.log(this.playerGameboard.getBoard());
