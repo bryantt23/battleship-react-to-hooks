@@ -32,6 +32,7 @@ function App() {
     computerPositionsThatHaveBeenAttacked,
     setComputerPositionsThatHaveBeenAttacked
   ] = useState([...arr]);
+  const [cheat, setCheat] = useState(true);
 
   const updateBoardSectionState = (i, j, board) => {
     console.log(
@@ -140,6 +141,26 @@ function App() {
     console.log(dom);
     return dom;
   };
+
+  const renderComputerUiCheat = () => {
+    const dom = [];
+    let length = computerBoard.length;
+    for (let i = 0; i < length; i++) {
+      let arr = [];
+      for (let j = 0; j < length; j++) {
+        arr.push(
+          <BoardSection
+            status={computerBoard[i][j]}
+            updateBoardSectionState={() => {}}
+          />
+        );
+      }
+      const div = <tr>{arr}</tr>;
+      dom.push(div);
+    }
+    return dom;
+  };
+
   return (
     <div className='App'>
       <h1>Battleship</h1>
@@ -149,17 +170,16 @@ function App() {
       <h3>Computer Board</h3>
       {renderComputerUi()}
       <br />
+      {/* {this.state.disabled ? <h2>{this.state.winner}</h2> : ''} */}
+      <button
+        onClick={() => {
+          setCheat(!cheat);
+        }}
+      >
+        {cheat ? 'Hide ' : 'Show '} computer's ships{' '}
+      </button>
+      {cheat && renderComputerUiCheat()}
     </div>
-    // {this.state.disabled ? <h2>{this.state.winner}</h2> : ''}
-    // <button
-    //   onClick={() => {
-    //     this.setState({ cheat: !this.state.cheat });
-    //   }}
-    // >
-    //   {this.state.cheat ? 'Hide ' : 'Show '} computer's ships{' '}
-    // </button>
-    // {this.state.cheat && computerBoardUiCheat}
-    // </div>
   );
 }
 
