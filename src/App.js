@@ -15,7 +15,9 @@ for (let i = 0; i < boardSize; i++) {
 let arr2 = JSON.parse(JSON.stringify(arr));
 
 function App() {
-  const [computerBoard, setComputerBoard] = useState();
+  const [computerBoard, setComputerBoard] = useState(
+    gameEngine.computerGameboard.getBoard()
+  );
   const [playerBoard, setPlayerBoard] = useState(
     gameEngine.playerGameboard.getBoard()
   );
@@ -26,6 +28,95 @@ function App() {
     playerPositionsThatHaveBeenAttacked,
     setPlayerPositionsThatHaveBeenAttacked
   ] = useState(arr);
+  const [
+    computerPositionsThatHaveBeenAttacked,
+    setComputerPositionsThatHaveBeenAttacked
+  ] = useState([...arr]);
+
+  const updateBoardSectionState = (i, j, board) => {
+    console.log(
+      '🚀 ~ file: App.js:31 ~ updateBoardSectionState ~ i, j, board',
+      i,
+      j,
+      board
+    );
+    /*
+    let attackedProperty;
+    if (board === 'playerBoard') {
+      attackedProperty = 'playerPositionsThatHaveBeenAttacked';
+    } else {
+      attackedProperty = 'computerPositionsThatHaveBeenAttacked';
+    }
+
+    const attackedBoard = this.state[attackedProperty];
+
+    if (this[board].isValidAttack(i, j, attackedBoard)) {
+      console.log('valid move');
+      const boardState = this.state[board];
+      const [updatedBoardState, updatedAttackBoard] = this[board].receiveAttack(
+        i,
+        j,
+        boardState,
+        attackedBoard
+      );
+
+      //use this & board to determine winner
+
+      console.log('all sunk', this[board].allShipsSunk());
+      const allShipsSunk = this[board].allShipsSunk();
+      if (allShipsSunk) {
+        let winner;
+        if (board === 'playerBoard') {
+          winner = 'Computer wins!';
+        } else {
+          winner = 'Player wins!';
+        }
+        this.setState({
+          allShipsSunk: true,
+          winner: winner,
+          disabled: true
+        });
+        return;
+      }
+
+      this.setState(
+        {
+          [attackedProperty]: updatedAttackBoard,
+          [board]: updatedBoardState,
+          isPlayerTurn: !this.state.isPlayerTurn
+        },
+        () => {
+          if (!this.state.isPlayerTurn) this.computerMove();
+        }
+      );
+    } else {
+      console.log('invalid move');
+    }
+    */
+  };
+
+  //basically same function as renderPlayerUi
+  const renderComputerUi = () => {
+    const dom = [];
+    for (let i = 0; i < boardSize; i++) {
+      let arr = [];
+      for (let j = 0; j < boardSize; j++) {
+        arr.push(
+          <BoardSection
+            isComputer={true}
+            attacked={computerPositionsThatHaveBeenAttacked[i][j]}
+            status={computerBoard[i][j]}
+            updateBoardSectionState={() => {
+              updateBoardSectionState(i, j, 'computerBoard');
+            }}
+          />
+        );
+      }
+      const div = <tr>{arr}</tr>;
+      dom.push(div);
+    }
+    return dom;
+  };
 
   const renderPlayerUi = () => {
     const dom = [];
@@ -56,7 +147,7 @@ function App() {
       <h3>Player Board</h3>
       {renderPlayerUi()}
       <h3>Computer Board</h3>
-      {/* {computerBoardUi} */}
+      {renderComputerUi()}
       <br />
     </div>
     // {this.state.disabled ? <h2>{this.state.winner}</h2> : ''}
