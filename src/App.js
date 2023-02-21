@@ -3,7 +3,7 @@ import './App.css';
 import GameEngine from './components/GameEngine';
 import BoardSection from './components/BoardSection';
 
-const boardSize = 5;
+const boardSize = 3;
 const gameEngine = new GameEngine(boardSize);
 gameEngine.startGame();
 console.log('🚀 ~ file: App.js:9 ~ gameEngine', gameEngine);
@@ -38,11 +38,31 @@ function App() {
   const [cheat, setCheat] = useState(true);
   const [playerBoardUi, setPlayerBoardUi] = useState([]);
   const [computerBoardUi, setComputerBoardUi] = useState([]);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+
+  useEffect(() => {
+    if (!isPlayerTurn) {
+      computerMove();
+    }
+  }, [isPlayerTurn]);
 
   useEffect(() => {
     setPlayerBoardUi(renderPlayerUi());
     setComputerBoardUi(renderComputerUi());
   }, [playerBoard, computerBoard]);
+
+  const computerMove = () => {
+    const [i, j] = gameEngine.computer.makePlay(playerBoardInstance);
+
+    const attackedBoard = [...playerPositionsThatHaveBeenAttacked];
+
+    if (playerBoardInstance.isValidAttack(i, j, attackedBoard)) {
+      updateBoardSectionState(i, j, 'playerBoard');
+    } else {
+      console.log('invalid computer move');
+      computerMove();
+    }
+  };
 
   const updateBoardSectionState = (i, j, board) => {
     console.log(
