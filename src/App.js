@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import GameEngine from './components/GameEngine';
 import BoardSection from './components/BoardSection';
 
-const boardSize = 3;
+const boardSize = 2;
 const gameEngine = new GameEngine(boardSize);
 gameEngine.startGame();
 console.log('🚀 ~ file: App.js:9 ~ gameEngine', gameEngine);
@@ -34,16 +34,25 @@ function App() {
   const [
     computerPositionsThatHaveBeenAttacked,
     setComputerPositionsThatHaveBeenAttacked
-  ] = useState([...arr]);
+  ] = useState(arr2);
   const [cheat, setCheat] = useState(true);
   const [playerBoardUi, setPlayerBoardUi] = useState([]);
   const [computerBoardUi, setComputerBoardUi] = useState([]);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [allShipsSunk, setAllShipsSunk] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [disabled, setDisabled] = useState(false);
+  const [playerTurns, setPlayerTurns] = useState('start: ');
+
+  const myStringRef = useRef('Hello');
 
   useEffect(() => {
     if (!isPlayerTurn) {
       computerMove();
     }
+    setPlayerTurns(
+      playerTurns + (isPlayerTurn ? 'player turn ' : 'computer turn ')
+    );
   }, [isPlayerTurn]);
 
   useEffect(() => {
@@ -104,54 +113,27 @@ function App() {
       } else {
         setComputerBoard([...updatedBoardState]);
       }
-    } else {
-      console.log('invalid move');
-    }
-
-    /*
-    if (this[board].isValidAttack(i, j, attackedBoard)) {
-      console.log('valid move');
-      const boardState = this.state[board];
-      const [updatedBoardState, updatedAttackBoard] = this[board].receiveAttack(
-        i,
-        j,
-        boardState,
-        attackedBoard
-      );
 
       //use this & board to determine winner
 
-      console.log('all sunk', this[board].allShipsSunk());
-      const allShipsSunk = this[board].allShipsSunk();
+      console.log('all sunk', thisBoard.allShipsSunk());
+      const allShipsSunk = thisBoard.allShipsSunk();
       if (allShipsSunk) {
-        let winner;
+        let winnerTemp;
         if (board === 'playerBoard') {
-          winner = 'Computer wins!';
+          winnerTemp = 'Computer wins!';
         } else {
-          winner = 'Player wins!';
+          winnerTemp = 'Player wins!';
         }
-        this.setState({
-          allShipsSunk: true,
-          winner: winner,
-          disabled: true
-        });
+        setAllShipsSunk(true);
+        setWinner(winnerTemp);
+        setDisabled(true);
         return;
       }
-
-      this.setState(
-        {
-          [attackedProperty]: updatedAttackBoard,
-          [board]: updatedBoardState,
-          isPlayerTurn: !this.state.isPlayerTurn
-        },
-        () => {
-          if (!this.state.isPlayerTurn) this.computerMove();
-        }
-      );
+      setIsPlayerTurn(!isPlayerTurn);
     } else {
       console.log('invalid move');
     }
-    */
   };
 
   //basically same function as renderPlayerUi
@@ -224,21 +206,24 @@ function App() {
   return (
     <div className='App'>
       <h1>Battleship</h1>
-      {/* <div disabled={this.state.winner !== null} id='gameboard'> */}
-      <h3>Player Board</h3>
-      {playerBoardUi}
-      <h3>Computer Board</h3>
-      {computerBoardUi}
-      <br />
-      {/* {this.state.disabled ? <h2>{this.state.winner}</h2> : ''} */}
-      <button
-        onClick={() => {
-          setCheat(!cheat);
-        }}
-      >
-        {cheat ? 'Hide ' : 'Show '} computer's ships{' '}
-      </button>
-      {cheat && computerBoardUiCheat}
+      <p>{playerTurns}</p>
+      {isPlayerTurn ? 'player turn ' : 'computer turn '}
+      <div disabled={winner !== null} id='gameboard'>
+        <h3>Player Board</h3>
+        {playerBoardUi}
+        <h3>Computer Board</h3>
+        {computerBoardUi}
+        <br />
+        {disabled ? <h2>{winner}</h2> : ''}
+        <button
+          onClick={() => {
+            setCheat(!cheat);
+          }}
+        >
+          {cheat ? 'Hide ' : 'Show '} computer's ships{' '}
+        </button>
+        {cheat && computerBoardUiCheat}
+      </div>
     </div>
   );
 }
